@@ -14,20 +14,12 @@ export interface FlightMetadata {
   readonly callsign: string;
   readonly registration: string;
   readonly aircraftType: string;
-  readonly airline: string;
-  readonly origin: string;
-  readonly destination: string;
   readonly squawk: string;
 }
 
 export interface FlightData {
   readonly location: FlightLocation;
   readonly metadata: FlightMetadata | null;
-}
-
-export interface DataSourceCallbacks {
-  readonly onPosition: (location: FlightLocation) => void;
-  readonly onMetadata: (metadata: FlightMetadata) => void;
 }
 
 export interface BoundingBox {
@@ -40,7 +32,7 @@ export interface BoundingBox {
 export interface DataSource {
   readonly start: (bounds?: BoundingBox) => void;
   readonly stop: () => void;
-  readonly updateBounds?: (bounds: BoundingBox) => void;
+  readonly updateBounds: (bounds: BoundingBox) => void;
 }
 
 export type Fetcher = typeof fetch;

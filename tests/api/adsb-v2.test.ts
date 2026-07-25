@@ -64,6 +64,26 @@ describe("parseV2Aircraft", () => {
     const result = parseV2Aircraft(ac[1])!;
     expect(result.location.verticalSpeed).toBe(-1200);
   });
+
+  it("falls back to alt_geom when alt_baro is missing", () => {
+    const result = parseV2Aircraft({ hex: "aaa", lat: 1, lon: 2, alt_geom: 9000 })!;
+    expect(result.location.altitude).toBe(9000);
+  });
+
+  it("defaults altitude to 0 when both alt_baro and alt_geom are missing", () => {
+    const result = parseV2Aircraft({ hex: "aaa", lat: 1, lon: 2 })!;
+    expect(result.location.altitude).toBe(0);
+  });
+
+  it("falls back to mag_heading when true_heading and track are missing", () => {
+    const result = parseV2Aircraft({ hex: "aaa", lat: 1, lon: 2, mag_heading: 77 })!;
+    expect(result.location.heading).toBe(77);
+  });
+
+  it("defaults groundSpeed to 0 when gs is missing", () => {
+    const result = parseV2Aircraft({ hex: "aaa", lat: 1, lon: 2 })!;
+    expect(result.location.groundSpeed).toBe(0);
+  });
 });
 
 describe("boundsToCenter", () => {
@@ -91,5 +111,13 @@ describe("boundsToCenter", () => {
     );
     expect(result.radiusNm).toBeGreaterThan(0);
     expect(result.radiusNm).toBeLessThan(60);
+  });
+
+  it("uses the east-west span when it exceeds the north-south span", () => {
+    // Near the equator, 1 deg lng ~= 1 deg lat in nm, so a much wider
+    // lng span should push radius above what the lat span alone gives.
+    const wide = boundsToCenter({ south: 0, north: 1, west: -10, east: 10 }, 250);
+    const narrow = boundsToCenter({ south: 0, north: 1, west: 0, east: 1 }, 250);
+    expect(wide.radiusNm).toBeGreaterThan(narrow.radiusNm);
   });
 });

@@ -23,12 +23,7 @@ export async function fetchFlights(
   const data: V2Response = await response.json();
   if (!data.ac) return [];
 
-  const results: { location: FlightLocation; metadata: FlightMetadata }[] = [];
-  for (const ac of data.ac) {
-    const parsed = parseV2Aircraft(ac);
-    if (parsed) results.push(parsed);
-  }
-  return results;
+  return data.ac.map(parseV2Aircraft).filter((p) => p !== null);
 }
 
 export function createAirplanesLiveSource(

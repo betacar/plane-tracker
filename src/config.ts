@@ -9,8 +9,6 @@ export const MAP_ZOOM = 5;
 
 export const AIRPLANES_LIVE_API_URL = "/api/airplanes-live/v2";
 
-export const ADSB_FI_API_URL = "/api/adsb-fi/v2";
-
 export const POLL_INTERVAL_MS = 10_000;
 export const STALE_THRESHOLD_MS = 2 * 60_000;
 

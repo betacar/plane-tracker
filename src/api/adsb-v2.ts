@@ -66,9 +66,6 @@ export function parseV2Aircraft(
       callsign: ac.flight?.trim() ?? "",
       registration: ac.r ?? "",
       aircraftType: ac.t ?? "",
-      airline: "",
-      origin: "",
-      destination: "",
       squawk: ac.squawk ?? "",
     },
   };

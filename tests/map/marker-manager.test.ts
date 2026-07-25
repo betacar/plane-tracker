@@ -24,9 +24,6 @@ function makeMetadata(
     callsign: "BAW123",
     registration: "G-EUPT",
     aircraftType: "A320",
-    airline: "British Airways",
-    origin: "LHR",
-    destination: "CDG",
     squawk: "4521",
     ...overrides,
   };
@@ -96,7 +93,7 @@ describe("createMarkerManager", () => {
 
     const data = manager.getFlightData("BAW123");
     expect(data!.metadata).not.toBeNull();
-    expect(data!.metadata!.airline).toBe("British Airways");
+    expect(data!.metadata!.registration).toBe("G-EUPT");
   });
 
   it("ignores metadata for unknown flight", () => {

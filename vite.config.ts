@@ -8,11 +8,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/api\/airplanes-live\//, ""),
       },
-      "/api/adsb-fi/": {
-        target: "https://opendata.adsb.fi/api/",
-        changeOrigin: true,
-        rewrite: (path: string) => path.replace(/^\/api\/adsb-fi\//, ""),
-      },
     },
   },
   test: {

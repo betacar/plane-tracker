@@ -5,7 +5,6 @@ import {
   formatHeading,
   formatVerticalSpeed,
   formatSquawk,
-  formatRoute,
   formatAircraftType,
 } from "./panel-formatter";
 
@@ -64,16 +63,6 @@ export function buildPanelContent(data: FlightData): DocumentFragment {
     body.appendChild(createRow("Registration", metadata.registration || "N/A"));
     body.appendChild(
       createRow("Aircraft", formatAircraftType(metadata.aircraftType))
-    );
-    body.appendChild(createRow("Airline", metadata.airline || "N/A"));
-  }
-
-  body.appendChild(createDivider());
-
-  // Route section
-  if (metadata) {
-    body.appendChild(
-      createRow("Route", formatRoute(metadata.origin, metadata.destination))
     );
   }
 

@@ -5,7 +5,6 @@ import {
   formatHeading,
   formatVerticalSpeed,
   formatSquawk,
-  formatRoute,
   formatAircraftType,
 } from "../../src/ui/panel-formatter";
 
@@ -28,6 +27,14 @@ describe("formatAltitude", () => {
 
   it("returns feet for low altitudes", () => {
     expect(formatAltitude(1500)).toBe("1,500 ft");
+  });
+
+  it("stays in feet just below the FL180 transition", () => {
+    expect(formatAltitude(17999)).toBe("17,999 ft");
+  });
+
+  it("switches to flight level exactly at FL180", () => {
+    expect(formatAltitude(18000)).toBe("FL180");
   });
 });
 
@@ -89,24 +96,6 @@ describe("formatSquawk", () => {
 
   it("returns N/A for empty squawk", () => {
     expect(formatSquawk("")).toBe("N/A");
-  });
-});
-
-describe("formatRoute", () => {
-  it("formats origin to destination", () => {
-    expect(formatRoute("LHR", "CDG")).toBe("LHR \u2192 CDG");
-  });
-
-  it("returns N/A when both are empty", () => {
-    expect(formatRoute("", "")).toBe("N/A");
-  });
-
-  it("shows origin only when destination is empty", () => {
-    expect(formatRoute("LHR", "")).toBe("LHR \u2192 ?");
-  });
-
-  it("shows destination only when origin is empty", () => {
-    expect(formatRoute("", "CDG")).toBe("? \u2192 CDG");
   });
 });
 

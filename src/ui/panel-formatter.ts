@@ -23,11 +23,7 @@ export function formatHeading(degrees: number): string {
 }
 
 export function formatVerticalSpeed(fpm: number): string {
-  const rounded = Math.round(fpm);
-  const formatted = Math.abs(rounded).toLocaleString("en-US");
-  if (rounded > 0) return `+${formatted} ft/min`;
-  if (rounded < 0) return `-${formatted} ft/min`;
-  return `0 ft/min`;
+  return `${Math.round(fpm).toLocaleString("en-US", { signDisplay: "exceptZero" })} ft/min`;
 }
 
 export function formatSquawk(code: string): string {
@@ -35,13 +31,6 @@ export function formatSquawk(code: string): string {
   const label = getSquawkLabel(code);
   if (label !== code) return `${code} (${label})`;
   return code;
-}
-
-export function formatRoute(origin: string, destination: string): string {
-  if (!origin && !destination) return "N/A";
-  const from = origin || "?";
-  const to = destination || "?";
-  return `${from} \u2192 ${to}`;
 }
 
 export function formatAircraftType(code: string): string {

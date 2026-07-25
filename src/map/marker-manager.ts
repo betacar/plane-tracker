@@ -36,7 +36,7 @@ export function createMarkerManager(
       updatePlaneMarker(existing.marker, location, existing.metadata);
       entries.set(location.id, updatedEntry);
     } else {
-      const marker = createPlaneMarker(location, null, onPlaneClick);
+      const marker = createPlaneMarker(location, onPlaneClick);
       marker.addTo(map);
       entries.set(location.id, {
         marker,

@@ -1,7 +1,7 @@
 import "./styles/main.css";
 import { initMap } from "./map/map-init";
 import { createMarkerManager } from "./map/marker-manager";
-import { createDataSource } from "./api/data-source";
+import { createAirplanesLiveSource } from "./api/airplanes-live";
 import { showPanel, hidePanel } from "./ui/plane-panel";
 import { STALE_THRESHOLD_MS } from "./config";
 import type { BoundingBox } from "./types";
@@ -10,7 +10,6 @@ const map = initMap("map");
 const panelEl = document.getElementById("plane-panel")!;
 const countEl = document.querySelector("#plane-count span")!;
 const loadingEl = document.getElementById("loading")!;
-const bannerEl = document.getElementById("fallback-banner")!;
 
 let firstDataReceived = false;
 
@@ -39,7 +38,7 @@ function handlePlaneClick(id: string): void {
 
 const markerManager = createMarkerManager(map, handlePlaneClick);
 
-const { source } = createDataSource(
+const source = createAirplanesLiveSource(
   (location) => {
     if (!firstDataReceived) {
       firstDataReceived = true;
@@ -50,11 +49,6 @@ const { source } = createDataSource(
   },
   (metadata) => {
     markerManager.updateMetadata(metadata);
-  },
-  () => {
-    bannerEl.textContent =
-      "airplanes.live unavailable \u2014 falling back to adsb.fi";
-    bannerEl.classList.remove("hidden");
   }
 );
 
@@ -66,10 +60,9 @@ map.on("click", () => {
 // Update data source bounds on pan/zoom (debounced)
 let boundsTimer: ReturnType<typeof setTimeout> | null = null;
 map.on("moveend", () => {
-  if (!source.updateBounds) return;
   if (boundsTimer !== null) clearTimeout(boundsTimer);
   boundsTimer = setTimeout(() => {
-    source.updateBounds!(getMapBounds());
+    source.updateBounds(getMapBounds());
   }, 1000);
 });
 

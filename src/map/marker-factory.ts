@@ -1,5 +1,4 @@
 import L from "leaflet";
-import "leaflet-rotatedmarker";
 import type { FlightLocation, FlightMetadata } from "../types";
 import { getAircraftTypeInfo, type AircraftShape } from "../utils/aircraft-type";
 
@@ -42,38 +41,29 @@ const PLANE_SVGS: Record<AircraftShape, string> = {
 
 export function createPlaneIcon(
   color: string,
-  shape: AircraftShape
+  shape: AircraftShape,
+  heading: number
 ): L.DivIcon {
   const svg = PLANE_SVGS[shape].replace(/COLOR/g, color);
   return L.divIcon({
     className: "plane-marker",
-    html: `<svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg">${svg}</svg>`,
+    html: `<svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(${heading}deg)">${svg}</svg>`,
     iconSize: [20, 28],
     iconAnchor: [10, 14],
   });
 }
 
-export function getEffectiveHeading(location: FlightLocation): number {
-  return location.heading;
-}
-
 export function createPlaneMarker(
   location: FlightLocation,
-  metadata: FlightMetadata | null,
   onClick: (id: string) => void
 ): L.Marker {
-  const aircraftType = metadata?.aircraftType ?? "";
-  const info = getAircraftTypeInfo(aircraftType);
-  const heading = getEffectiveHeading(location);
-  const label = metadata?.callsign || location.id;
+  const info = getAircraftTypeInfo("");
 
   const marker = L.marker([location.lat, location.lng], {
-    icon: createPlaneIcon(info.color, info.shape),
-    rotationAngle: heading,
-    rotationOrigin: "center center",
-  } as L.MarkerOptions);
+    icon: createPlaneIcon(info.color, info.shape, location.heading),
+  });
 
-  marker.bindTooltip(label, {
+  marker.bindTooltip(location.id, {
     direction: "top",
     offset: [0, -14],
     className: "plane-tooltip",
@@ -91,14 +81,13 @@ export function updatePlaneMarker(
 ): void {
   marker.setLatLng([location.lat, location.lng]);
 
-  const heading = getEffectiveHeading(location);
-  (
-    marker as L.Marker & { setRotationAngle: (a: number) => void }
-  ).setRotationAngle(heading);
-
   if (metadata) {
     const info = getAircraftTypeInfo(metadata.aircraftType);
-    marker.setIcon(createPlaneIcon(info.color, info.shape));
+    marker.setIcon(createPlaneIcon(info.color, info.shape, location.heading));
     marker.setTooltipContent(metadata.callsign || location.id);
+    return;
   }
+
+  const svg = marker.getElement()?.querySelector("svg");
+  if (svg) svg.style.transform = `rotate(${location.heading}deg)`;
 }

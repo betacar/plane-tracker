@@ -22,9 +22,6 @@ function makeMetadata(overrides: Partial<FlightMetadata> = {}): FlightMetadata {
     callsign: "BAW123",
     registration: "G-EUPT",
     aircraftType: "A320",
-    airline: "British Airways",
-    origin: "LHR",
-    destination: "CDG",
     squawk: "4521",
     ...overrides,
   };
@@ -55,14 +52,6 @@ describe("buildPanelContent", () => {
     expect(title?.textContent).toBe("Unknown Flight");
   });
 
-  it("includes route row", () => {
-    const fragment = buildPanelContent(makeData());
-    const container = document.createElement("div");
-    container.appendChild(fragment);
-    expect(container.textContent).toContain("LHR");
-    expect(container.textContent).toContain("CDG");
-  });
-
   it("includes altitude row", () => {
     const fragment = buildPanelContent(makeData({ altitude: 35000 }));
     const container = document.createElement("div");
@@ -75,6 +64,13 @@ describe("buildPanelContent", () => {
     const container = document.createElement("div");
     container.appendChild(fragment);
     expect(container.textContent).toContain("450.0 kn");
+  });
+
+  it('shows "N/A" for a blank registration', () => {
+    const fragment = buildPanelContent(makeData({}, { registration: "" }));
+    const container = document.createElement("div");
+    container.appendChild(fragment);
+    expect(container.textContent).toContain("N/A");
   });
 
   it("includes close button", () => {
