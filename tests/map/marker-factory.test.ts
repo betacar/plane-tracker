@@ -35,8 +35,8 @@ describe("createPlaneIcon", () => {
   it("creates an icon with the given color", () => {
     const icon = createPlaneIcon("#3498db", "widebody", 0);
     expect(icon.options.className).toBe("plane-marker");
-    expect(icon.options.iconSize).toEqual([20, 28]);
-    expect(icon.options.iconAnchor).toEqual([10, 14]);
+    expect(icon.options.iconSize).toEqual([26, 26]);
+    expect(icon.options.iconAnchor).toEqual([13, 13]);
   });
 
   it("embeds color into SVG", () => {
