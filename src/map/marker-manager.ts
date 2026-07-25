@@ -1,6 +1,10 @@
 import type L from "leaflet";
 import type { FlightLocation, FlightMetadata, FlightData } from "../types";
-import { createPlaneMarker, updatePlaneMarker } from "./marker-factory";
+import {
+  createPlaneMarker,
+  updatePlaneMarker,
+  applyPlaneMetadata,
+} from "./marker-factory";
 import { STALE_THRESHOLD_MS } from "../config";
 
 interface MarkerEntry {
@@ -33,7 +37,7 @@ export function createMarkerManager(
         location,
         lastUpdate: Date.now(),
       };
-      updatePlaneMarker(existing.marker, location, existing.metadata);
+      updatePlaneMarker(existing.marker, location);
       entries.set(location.id, updatedEntry);
     } else {
       const marker = createPlaneMarker(location, onPlaneClick);
@@ -51,12 +55,17 @@ export function createMarkerManager(
     const existing = entries.get(metadata.id);
     if (!existing) return;
 
-    const updatedEntry: MarkerEntry = {
-      ...existing,
-      metadata,
-    };
-    updatePlaneMarker(existing.marker, existing.location, metadata);
-    entries.set(metadata.id, updatedEntry);
+    // Only aircraftType (icon) and callsign (tooltip) affect the marker;
+    // skip the icon rebuild when neither changed.
+    const prev = existing.metadata;
+    if (
+      prev?.aircraftType !== metadata.aircraftType ||
+      prev.callsign !== metadata.callsign
+    ) {
+      applyPlaneMetadata(existing.marker, existing.location, metadata);
+    }
+
+    entries.set(metadata.id, { ...existing, metadata });
   }
 
   function getFlightData(id: string): FlightData | null {

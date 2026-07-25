@@ -76,18 +76,20 @@ export function createPlaneMarker(
 
 export function updatePlaneMarker(
   marker: L.Marker,
-  location: FlightLocation,
-  metadata: FlightMetadata | null
+  location: FlightLocation
 ): void {
   marker.setLatLng([location.lat, location.lng]);
 
-  if (metadata) {
-    const info = getAircraftTypeInfo(metadata.aircraftType);
-    marker.setIcon(createPlaneIcon(info.color, info.shape, location.heading));
-    marker.setTooltipContent(metadata.callsign || location.id);
-    return;
-  }
-
   const svg = marker.getElement()?.querySelector("svg");
   if (svg) svg.style.transform = `rotate(${location.heading}deg)`;
+}
+
+export function applyPlaneMetadata(
+  marker: L.Marker,
+  location: FlightLocation,
+  metadata: FlightMetadata
+): void {
+  const info = getAircraftTypeInfo(metadata.aircraftType);
+  marker.setIcon(createPlaneIcon(info.color, info.shape, location.heading));
+  marker.setTooltipContent(metadata.callsign || location.id);
 }

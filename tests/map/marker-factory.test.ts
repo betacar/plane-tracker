@@ -4,6 +4,7 @@ import {
   createPlaneIcon,
   createPlaneMarker,
   updatePlaneMarker,
+  applyPlaneMetadata,
 } from "../../src/map/marker-factory";
 import type { FlightLocation } from "../../src/types";
 
@@ -66,9 +67,27 @@ describe("createPlaneMarker", () => {
 });
 
 describe("updatePlaneMarker", () => {
-  it("swaps icon and tooltip content when metadata arrives", () => {
+  it("rotates the existing SVG in place via CSS", () => {
+    const marker = createPlaneMarker(makeLocation({ heading: 10 }), vi.fn());
+    addToRealMap(marker);
+
+    updatePlaneMarker(marker, makeLocation({ heading: 250 }));
+
+    const svg = marker.getElement()?.querySelector("svg") as SVGElement;
+    expect(svg.style.transform).toBe("rotate(250deg)");
+  });
+
+  it("updates position", () => {
+    const marker = createPlaneMarker(makeLocation(), vi.fn());
+    updatePlaneMarker(marker, makeLocation({ lat: 1, lng: 2 }));
+    expect(marker.getLatLng()).toEqual(L.latLng(1, 2));
+  });
+});
+
+describe("applyPlaneMetadata", () => {
+  it("swaps icon and tooltip content", () => {
     const marker = createPlaneMarker(makeLocation({ id: "BAW123" }), vi.fn());
-    updatePlaneMarker(marker, makeLocation({ id: "BAW123" }), {
+    applyPlaneMetadata(marker, makeLocation({ id: "BAW123" }), {
       id: "BAW123",
       callsign: "SPEEDBIRD1",
       registration: "G-EUPT",
@@ -80,7 +99,7 @@ describe("updatePlaneMarker", () => {
 
   it("falls back to the flight id as tooltip content when callsign is blank", () => {
     const marker = createPlaneMarker(makeLocation({ id: "BAW123" }), vi.fn());
-    updatePlaneMarker(marker, makeLocation({ id: "BAW123" }), {
+    applyPlaneMetadata(marker, makeLocation({ id: "BAW123" }), {
       id: "BAW123",
       callsign: "",
       registration: "",
@@ -88,21 +107,5 @@ describe("updatePlaneMarker", () => {
       squawk: "",
     });
     expect(marker.getTooltip()?.getContent()).toBe("BAW123");
-  });
-
-  it("rotates the existing SVG in place via CSS when metadata is unavailable", () => {
-    const marker = createPlaneMarker(makeLocation({ heading: 10 }), vi.fn());
-    addToRealMap(marker);
-
-    updatePlaneMarker(marker, makeLocation({ heading: 250 }), null);
-
-    const svg = marker.getElement()?.querySelector("svg") as SVGElement;
-    expect(svg.style.transform).toBe("rotate(250deg)");
-  });
-
-  it("updates position regardless of metadata presence", () => {
-    const marker = createPlaneMarker(makeLocation(), vi.fn());
-    updatePlaneMarker(marker, makeLocation({ lat: 1, lng: 2 }), null);
-    expect(marker.getLatLng()).toEqual(L.latLng(1, 2));
   });
 });

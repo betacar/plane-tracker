@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import L from "leaflet";
 import { createMarkerManager } from "../../src/map/marker-manager";
 import type { FlightLocation, FlightMetadata } from "../../src/types";
 
@@ -94,6 +95,25 @@ describe("createMarkerManager", () => {
     const data = manager.getFlightData("BAW123");
     expect(data!.metadata).not.toBeNull();
     expect(data!.metadata!.registration).toBe("G-EUPT");
+  });
+
+  it("rebuilds the marker icon only when aircraft type or callsign change", () => {
+    const setIcon = vi.spyOn(L.Marker.prototype, "setIcon");
+    const manager = createMarkerManager(map, onClick);
+    manager.updatePosition(makeLocation());
+
+    manager.updateMetadata(makeMetadata());
+    expect(setIcon).toHaveBeenCalledTimes(1);
+
+    // Same marker-relevant fields — no rebuild
+    manager.updateMetadata(makeMetadata({ squawk: "7700" }));
+    manager.updatePosition(makeLocation({ lat: 52.0, heading: 200 }));
+    expect(setIcon).toHaveBeenCalledTimes(1);
+
+    manager.updateMetadata(makeMetadata({ callsign: "SPEEDBIRD1" }));
+    expect(setIcon).toHaveBeenCalledTimes(2);
+
+    setIcon.mockRestore();
   });
 
   it("ignores metadata for unknown flight", () => {
