@@ -84,6 +84,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # Restore node_modules so wrangler-action uses the repo's wrangler 4.x
+      # instead of its outdated bundled version.
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
       - uses: actions/download-artifact@v4
         with:
           name: dist
