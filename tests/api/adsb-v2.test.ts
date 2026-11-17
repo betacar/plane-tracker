@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { parseV2Aircraft, boundsToCenter, type V2Aircraft } from "../../src/api/adsb-v2";
 import fixture from "../fixtures/v2-aircraft.json";
 
-const ac = fixture.ac as unknown as V2Aircraft[];
+const ac = fixture.aircraft as unknown as V2Aircraft[];
 
 describe("parseV2Aircraft", () => {
   it("uses trimmed flight as id", () => {

@@ -1,4 +1,4 @@
-import { AIRPLANES_LIVE_API_URL, POLL_INTERVAL_MS, MAX_QUERY_RADIUS_NM } from "../config";
+import { ADSB_FI_API_URL, POLL_INTERVAL_MS, MAX_QUERY_RADIUS_NM } from "../config";
 import type {
   FlightLocation,
   FlightMetadata,
@@ -10,7 +10,7 @@ import { parseV2Aircraft, boundsToCenter, type V2Response } from "./adsb-v2";
 
 function buildUrl(bounds: BoundingBox): string {
   const { lat, lng, radiusNm } = boundsToCenter(bounds, MAX_QUERY_RADIUS_NM);
-  return `${AIRPLANES_LIVE_API_URL}/point/${lat.toFixed(4)}/${lng.toFixed(4)}/${Math.round(radiusNm)}`;
+  return `${ADSB_FI_API_URL}/lat/${lat.toFixed(4)}/lon/${lng.toFixed(4)}/dist/${Math.round(radiusNm)}`;
 }
 
 export async function fetchFlights(
@@ -21,12 +21,12 @@ export async function fetchFlights(
   if (!response.ok) return [];
 
   const data: V2Response = await response.json();
-  if (!data.ac) return [];
+  if (!data.aircraft) return [];
 
-  return data.ac.map(parseV2Aircraft).filter((p) => p !== null);
+  return data.aircraft.map(parseV2Aircraft).filter((p) => p !== null);
 }
 
-export function createAirplanesLiveSource(
+export function createAdsbFiSource(
   onPosition: (loc: FlightLocation) => void,
   onMetadata: (meta: FlightMetadata) => void
 ): DataSource {

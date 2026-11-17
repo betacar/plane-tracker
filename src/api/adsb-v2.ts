@@ -27,7 +27,7 @@ export interface V2Aircraft {
 }
 
 export interface V2Response {
-  readonly ac: readonly V2Aircraft[];
+  readonly aircraft: readonly V2Aircraft[];
   readonly msg?: string;
   readonly now?: number;
   readonly total?: number;

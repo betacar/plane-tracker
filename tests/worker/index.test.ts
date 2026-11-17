@@ -6,20 +6,20 @@ afterEach(() => {
 });
 
 describe("worker fetch", () => {
-  it("proxies /api/airplanes-live/* to the upstream API, stripping the prefix", async () => {
-    const upstream = new Response(JSON.stringify({ ac: [] }), { status: 200 });
+  it("proxies /api/adsb-fi/* to the upstream API, stripping the prefix", async () => {
+    const upstream = new Response(JSON.stringify({ aircraft: [] }), { status: 200 });
     const mockFetch = vi.fn().mockResolvedValue(upstream);
     vi.stubGlobal("fetch", mockFetch);
 
     const request = new Request(
-      "https://pt.example.com/api/airplanes-live/v2/point/50/8/50?extra=1"
+      "https://pt.example.com/api/adsb-fi/v2/lat/50/lon/8/dist/50?extra=1"
     );
     const env = { ASSETS: { fetch: vi.fn() } };
 
     const response = await worker.fetch(request, env);
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.airplanes.live/v2/point/50/8/50?extra=1",
+      "https://opendata.adsb.fi/api/v2/lat/50/lon/8/dist/50?extra=1",
       { headers: { Accept: "application/json" } }
     );
     expect(response.status).toBe(200);
@@ -32,7 +32,7 @@ describe("worker fetch", () => {
     const upstream = new Response(null, { status: 503 });
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(upstream));
 
-    const request = new Request("https://pt.example.com/api/airplanes-live/v2/point/1/2/3");
+    const request = new Request("https://pt.example.com/api/adsb-fi/v2/lat/1/lon/2/dist/3");
     const response = await worker.fetch(request, { ASSETS: { fetch: vi.fn() } });
 
     expect(response.status).toBe(503);

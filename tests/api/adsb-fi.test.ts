@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   fetchFlights,
-  createAirplanesLiveSource,
-} from "../../src/api/airplanes-live";
+  createAdsbFiSource,
+} from "../../src/api/adsb-fi";
 import fixture from "../fixtures/v2-aircraft.json";
 
 describe("fetchFlights", () => {
@@ -19,7 +19,7 @@ describe("fetchFlights", () => {
 
     expect(mockFetch).toHaveBeenCalledOnce();
     const url = mockFetch.mock.calls[0][0] as string;
-    expect(url).toContain("/v2/point/");
+    expect(url).toContain("/v2/lat/");
     // 3 airborne out of 4 (one is ground)
     expect(results).toHaveLength(3);
     expect(results[0].location.id).toBe("DLH1234");
@@ -34,7 +34,7 @@ describe("fetchFlights", () => {
     expect(results).toEqual([]);
   });
 
-  it("returns empty array when ac is null", async () => {
+  it("returns empty array when aircraft is missing", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ msg: "No error", now: 0 }),
@@ -47,7 +47,7 @@ describe("fetchFlights", () => {
   });
 });
 
-describe("createAirplanesLiveSource", () => {
+describe("createAdsbFiSource", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -62,7 +62,7 @@ describe("createAirplanesLiveSource", () => {
 
     const onPosition = vi.fn();
     const onMetadata = vi.fn();
-    const source = createAirplanesLiveSource(onPosition, onMetadata);
+    const source = createAdsbFiSource(onPosition, onMetadata);
 
     source.start({ south: 45, north: 55, west: -10, east: 15 });
     await new Promise((r) => setTimeout(r, 50));
@@ -81,7 +81,7 @@ describe("createAirplanesLiveSource", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const onPosition = vi.fn();
-    const source = createAirplanesLiveSource(onPosition, vi.fn());
+    const source = createAdsbFiSource(onPosition, vi.fn());
     source.start();
     await new Promise((r) => setTimeout(r, 50));
 
@@ -96,7 +96,7 @@ describe("createAirplanesLiveSource", () => {
     });
     vi.stubGlobal("fetch", mockFetch);
 
-    const source = createAirplanesLiveSource(vi.fn(), vi.fn());
+    const source = createAdsbFiSource(vi.fn(), vi.fn());
     source.start({ south: 45, north: 55, west: -10, east: 15 });
     source.stop();
 
@@ -105,7 +105,7 @@ describe("createAirplanesLiveSource", () => {
   });
 
   it("updates bounds via updateBounds", () => {
-    const source = createAirplanesLiveSource(vi.fn(), vi.fn());
+    const source = createAdsbFiSource(vi.fn(), vi.fn());
     source.start({ south: 45, north: 55, west: -10, east: 15 });
     source.updateBounds!({ south: 40, north: 50, west: -5, east: 10 });
     source.stop();
