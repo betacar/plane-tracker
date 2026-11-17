@@ -54,4 +54,4 @@ npm run coverage  # Run with coverage (80% threshold)
 
 ## License
 
-MIT. Data: [airplanes.live](https://airplanes.live), [adsb.fi](https://adsb.fi). Map tiles: [CARTO](https://carto.com/) + [OpenStreetMap](https://www.openstreetmap.org/copyright).
+MIT. Data: [airplanes.live](https://airplanes.live), [adsb.fi](https://adsb.fi). Map tiles: [OpenStreetMap](https://www.openstreetmap.org/copyright).

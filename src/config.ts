@@ -1,8 +1,8 @@
 export const TILE_URL =
-  "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+  "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 export const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 export const MAP_CENTER: [number, number] = [40, -3];
 export const MAP_ZOOM = 5;
