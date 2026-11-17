@@ -3,10 +3,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   server: {
     proxy: {
-      "/api/airplanes-live/": {
-        target: "https://api.airplanes.live/",
+      "/api/adsb-fi/": {
+        target: "https://opendata.adsb.fi/api/",
         changeOrigin: true,
-        rewrite: (path: string) => path.replace(/^\/api\/airplanes-live\//, ""),
+        rewrite: (path: string) => path.replace(/^\/api\/adsb-fi\//, ""),
       },
     },
   },

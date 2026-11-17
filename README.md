@@ -4,9 +4,9 @@ Real-time flight tracking on a dark-themed map. Displays ADS-B aircraft position
 
 ## Features
 
-- Full-screen dark map (CARTO dark basemap)
+- Full-screen dark map (OpenStreetMap tiles, inverted)
 - Aircraft markers rotated to heading, colored by type (widebody, narrowbody, regional, cargo, helicopter, military, light)
-- Real-time position updates via airplanes.live REST API
+- Real-time position updates via adsb.fi REST API
 - Click any plane for details: callsign, registration, aircraft type, altitude, speed, heading, vertical speed, squawk
 - 120+ ICAO aircraft type codes mapped to categories and SVG silhouettes
 - URL state persistence (pan/zoom survives refresh)
@@ -25,14 +25,13 @@ Open [http://localhost:5173](http://localhost:5173). No API key required.
 
 | Source | Coverage | Auth | Protocol |
 |--------|----------|------|----------|
-| [airplanes.live](https://airplanes.live) | Global | None | REST (10s polling, ADS-B Exchange v2 format) |
-| [adsb.fi](https://adsb.fi) | Global | None | REST (fallback, same v2 format) |
+| [adsb.fi](https://adsb.fi) | Global | None | REST (10s polling, ADS-B Exchange v2 format) |
 
-Both sources provide unfiltered ADS-B data from community feeders worldwide. The v2 format includes hex ID, callsign, registration, aircraft type, position, altitude, speed, heading, vertical speed, squawk, and integrity fields.
+adsb.fi provides unfiltered ADS-B data from community feeders worldwide. The v2 format includes hex ID, callsign, registration, aircraft type, position, altitude, speed, heading, vertical speed, squawk, and integrity fields.
 
 ## Deploy
 
-Deployed to Cloudflare Workers with a CORS proxy for the upstream APIs:
+Deployed to Cloudflare Workers with a CORS proxy for the upstream API:
 
 ```bash
 npm run deploy
@@ -54,4 +53,4 @@ npm run coverage  # Run with coverage (80% threshold)
 
 ## License
 
-MIT. Data: [airplanes.live](https://airplanes.live), [adsb.fi](https://adsb.fi). Map tiles: [OpenStreetMap](https://www.openstreetmap.org/copyright).
+MIT. Data: [adsb.fi](https://adsb.fi). Map tiles: [OpenStreetMap](https://www.openstreetmap.org/copyright).

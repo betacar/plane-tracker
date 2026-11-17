@@ -1,7 +1,7 @@
 import "./styles/main.css";
 import { initMap } from "./map/map-init";
 import { createMarkerManager } from "./map/marker-manager";
-import { createAirplanesLiveSource } from "./api/airplanes-live";
+import { createAdsbFiSource } from "./api/adsb-fi";
 import { showPanel, hidePanel } from "./ui/plane-panel";
 import { STALE_THRESHOLD_MS } from "./config";
 import type { BoundingBox } from "./types";
@@ -38,7 +38,7 @@ function handlePlaneClick(id: string): void {
 
 const markerManager = createMarkerManager(map, handlePlaneClick);
 
-const source = createAirplanesLiveSource(
+const source = createAdsbFiSource(
   (location) => {
     if (!firstDataReceived) {
       firstDataReceived = true;
